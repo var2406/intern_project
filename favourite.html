@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Favorites - Delhi Food</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+      color: #333;
+      padding-top: 60px;
+    }
+
+    .favorites-section {
+      padding: 60px 20px;
+    }
+
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-body h5 {
+      font-weight: bold;
+    }
+
+    .btn-remove {
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="favorites-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h1 class="fw-bold display-5">❤️ Your Favorites</h1>
+        <p class="text-muted">A list of your most loved food spots in Delhi!</p>
+      </div>
+      <div class="row" id="favorites-container">
+        <!-- Favorite cards will be inserted here dynamically -->
+      </div>
+      <p class="text-center text-muted mt-5" id="no-favorites" style="display: none;">You haven't added any favorites yet.</p>
+    </div>
+  </section>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Favorites Script -->
+  <script>
+    const favoriteData = JSON.parse(localStorage.getItem("delhiFavorites")) || [];
+
+    const foodOutlets = [
+      { id: 1, name: "Dolma Aunti Momo", cuisine: "Tibetan", price: 120, rating: 4.6, image: "aunti mom.avif" },
+      { id: 2, name: "Half Fried", cuisine: "Street Food", price: 90, rating: 4.4, image: "hal fried.avif" },
+      { id: 3, name: "WOW! Delhi Snacks", cuisine: "North Indian", price: 150, rating: 4.7, image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=400&q=80" },
+      { id: 4, name: "Karim's", cuisine: "Mughlai", price: 250, rating: 4.8, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+      { id: 5, name: "Biryani Blues", cuisine: "Hyderabadi", price: 200, rating: 4.5, image: "biryani blues.png" },
+      { id: 6, name: "Sita Ram Diwan Chand", cuisine: "Chaat", price: 80, rating: 4.3, image: "sita ram.jpg" },
+      { id: 7, name: "Monginis Cake Shop", cuisine: "Desserts", price: 300, rating: 4.2, image: "ccbe-Monginis-Cake-Shop-Mumbai-chocolate-cake-8.jpg" },
+      { id: 8, name: "Jain Chawal Wale", cuisine: "Street Food", price: 100, rating: 4.1, image: "Jain-chawal-wale.jpg" },
+      { id: 9, name: "Kuremal Mohan Lal Kulfi", cuisine: "Desserts", price: 70, rating: 4.9, image: "c5be-Kuremal-Mohan-Lal-Kulfi-Wale-New-Delhi-dishes-5.jpg" },
+      { id: 10, name: "Chache Di Hatti", cuisine: "Street Food", price: 110, rating: 4.4, image: "Chache-Di-Hatti.jpg" }
+    ];
+
+    const favoritesContainer = document.getElementById("favorites-container");
+    const noFavMsg = document.getElementById("no-favorites");
+
+    function renderFavorites() {
+      if (favoriteData.length === 0) {
+        noFavMsg.style.display = "block";
+        return;
+      }
+
+      foodOutlets
+        .filter(outlet => favoriteData.includes(outlet.id))
+        .forEach(food => {
+          const col = document.createElement("div");
+          col.className = "col-md-6 col-lg-4 mb-4";
+
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <img src="${food.image}" class="card-img-top" alt="${food.name}">
+            <div class="card-body">
+              <h5 class="card-title">${food.name}</h5>
+              <p class="card-text mb-1"><strong>Cuisine:</strong> ${food.cuisine}</p>
+              <p class="card-text mb-1"><strong>Price:</strong> ₹${food.price}</p>
+              <p class="card-text mb-2"><strong>Rating:</strong> ${food.rating} ⭐</p>
+              <button class="btn btn-outline-danger btn-remove w-100" onclick="removeFavorite(${food.id})">🗑 Remove from Favorites</button>
+            </div>
+          `;
+
+          col.appendChild(card);
+          favoritesContainer.appendChild(col);
+        });
+    }
+
+    function removeFavorite(id) {
+      const updatedFavorites = favoriteData.filter(favId => favId !== id);
+      localStorage.setItem("delhiFavorites", JSON.stringify(updatedFavorites));
+      location.reload(); // Refresh to update UI
+    }
+
+    renderFavorites();
+  </script>
+
+</body>
+</html>
